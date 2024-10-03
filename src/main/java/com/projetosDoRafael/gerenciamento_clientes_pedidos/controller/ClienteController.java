@@ -2,6 +2,7 @@ package com.projetosDoRafael.gerenciamento_clientes_pedidos.controller;
 
 import com.projetosDoRafael.gerenciamento_clientes_pedidos.model.Cliente;
 import com.projetosDoRafael.gerenciamento_clientes_pedidos.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
