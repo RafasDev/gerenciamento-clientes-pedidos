@@ -1,64 +1,57 @@
 package com.projetosDoRafael.gerenciamento_clientes_pedidos.controller;
 
 import com.projetosDoRafael.gerenciamento_clientes_pedidos.model.Cliente;
-import com.projetosDoRafael.gerenciamento_clientes_pedidos.repository.ClienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.projetosDoRafael.gerenciamento_clientes_pedidos.service.ClienteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteController {
 
-    private final ClienteRepository clienteRepository;
+    private final ClienteService clienteService;
 
-    public ClienteController(ClienteRepository clienteRepository) {
-        this.clienteRepository = clienteRepository;
+    public ClienteController(ClienteService clienteService) {
+
+        this.clienteService = clienteService;
     }
 
     @GetMapping
     public List<Cliente> listarTodos() {
-        return clienteRepository.findAll();
+        return clienteService.listarTodos();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
-        return clienteRepository.findById(id)
+        return clienteService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Cliente criar(@RequestBody Cliente cliente) {
-        return clienteRepository.save(cliente);
+    public ResponseEntity<Cliente> criar(@RequestBody Cliente cliente) {
+        Cliente novoCliente = clienteService.criar(cliente);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-        return clienteRepository.findById(id)
-                //Só pra deixar claro o "c" se refere ao cliente
-                .map(c -> {
-                    c.setNome(cliente.getNome());
-                    c.setCpf(cliente.getCpf());
-                    c.setId(cliente.getId());
-                    c.setTelefone(cliente.getTelefone());
-                    c.setEmail(cliente.getEmail());
-                    clienteRepository.save(c);
-                    return ResponseEntity.ok(c);
-                })
+        return clienteService.atualizar(id, cliente)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletar(@PathVariable Long id) {
-        return clienteRepository.findById(id)
-                .map(c -> {
-                    clienteRepository.delete(c);
-                    return ResponseEntity.noContent().build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        if (clienteService.deletar(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 }
