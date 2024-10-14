@@ -20,17 +20,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((authz) -> authz
+                .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/clientes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/clientes/**").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/api/clientes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/clientes/**").hasRole("ADMIN")
-                        // Permitir acesso público às rotas do Swagger
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
-
         return http.build();
     }
 

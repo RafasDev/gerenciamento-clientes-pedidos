@@ -21,7 +21,7 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @GetMapping
+    @GetMapping("/todos")
     public List<Cliente> listarTodos() {
         return clienteService.listarTodos();
     }
@@ -33,9 +33,19 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/filtrar")
+    public List<Cliente> listarClientes(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) Integer cpf,
+            @RequestParam(required = false) Integer telefone,
+            @RequestParam(required = false) String email) {
+        return clienteService.filtrarClientes(nome, cpf, email, telefone);
+    }
+
+
     @PostMapping
-    public ResponseEntity<Cliente> criar(@RequestBody Cliente cliente) {
-        Cliente novoCliente = clienteService.criar(cliente);
+    public ResponseEntity<Cliente> criarCliente(@RequestBody Cliente cliente) {
+        Cliente novoCliente = clienteService.criarCliente(cliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
     }
 
