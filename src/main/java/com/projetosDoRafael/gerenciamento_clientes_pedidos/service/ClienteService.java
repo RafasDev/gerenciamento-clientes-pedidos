@@ -10,9 +10,10 @@ import java.util.Optional;
 
 @Service
 public class ClienteService {
-    @Autowired
+
     private final ClienteRepository clienteRepository;
 
+    @Autowired
     public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
     }
@@ -28,8 +29,6 @@ public class ClienteService {
                 email == null ? "" : email,
                 telefone == null ? null : telefone);
     }
-
-
 
     public Optional<Cliente> buscarPorId(Long id) {
         return clienteRepository.findById(id);

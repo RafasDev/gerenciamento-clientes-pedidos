@@ -12,9 +12,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Documentation")
-                        .version("1.0")
-                        .description("This is the API documentation for the project"));
+                        .title("Gerenciamento De Clientes E Pedidos")
+                        .version("1.1")
+                        .description("Documentação da API do meu sistema Gerenciamento De Clientes E Pedidos"));
     }
 }
-

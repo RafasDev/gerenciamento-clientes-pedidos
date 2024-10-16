@@ -2,7 +2,7 @@ package com.projetosDoRafael.gerenciamento_clientes_pedidos.controller;
 
 
 import com.projetosDoRafael.gerenciamento_clientes_pedidos.model.Pedido;
-import com.projetosDoRafael.gerenciamento_clientes_pedidos.repository.PedidoRepository;
+import com.projetosDoRafael.gerenciamento_clientes_pedidos.service.PedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,50 +12,39 @@ import java.util.List;
 @RequestMapping("/api/pedidos")
 public class PedidoController {
 
-    private final PedidoRepository pedidoRepository;
+    private final PedidoService pedidoService;
 
-    public PedidoController(PedidoRepository pedidoRepository) {
-        this.pedidoRepository = pedidoRepository;
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
     }
 
     @GetMapping
     public List<Pedido> listarTodos() {
-        return pedidoRepository.findAll();
+        return pedidoService.listarTodos();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> buscarPorId(@PathVariable Long id) {
-        return pedidoRepository.findById(id)
+        return pedidoService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Pedido criar(@RequestBody Pedido pedido) {
-        return pedidoRepository.save(pedido);
+        return pedidoService.criar(pedido);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Pedido> atualizar(@PathVariable Long id, @RequestBody Pedido pedido) {
-        return pedidoRepository.findById(id)
-                .map(p -> {
-                    p.setCliente(pedido.getCliente());
-                    p.setProdutos(pedido.getProdutos());
-                    p.setDataPedido(pedido.getDataPedido());
-                    p.setTotal(pedido.getTotal());
-                    pedidoRepository.save(p);
-                    return ResponseEntity.ok(p);
-                })
+        return pedidoService.atualizar(id, pedido)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletar(@PathVariable Long id) {
-        return pedidoRepository.findById(id)
-                .map(p -> {
-                    pedidoRepository.delete(p);
-                    return ResponseEntity.noContent().build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        boolean deleted = pedidoService.deletar(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
